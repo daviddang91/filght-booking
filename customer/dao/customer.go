@@ -9,6 +9,7 @@ type ICustomerService interface {
 	Create(customer *model.Customer) error
 	Update(customer *model.Customer) (*model.Customer, error)
 	GetById(customerId string) (*model.Customer, error)
+	GetByUsername(username string) (*model.Customer, error)
 	ChangePassword(customer *model.Customer, password string) bool
 }
 
@@ -39,6 +40,15 @@ func (cs *CustomerService) Update(customer *model.Customer) (*model.Customer, er
 func (cs *CustomerService) GetById(customerId string) (*model.Customer, error) {
 	query := model.Customer{}
 	find := cs.DB.First(&query, customerId)
+	if find.Error != nil {
+		return nil, find.Error
+	}
+	return &query, nil
+}
+
+func (cs *CustomerService) GetByUsername(username string) (*model.Customer, error) {
+	query := model.Customer{}
+	find := cs.DB.First(&query, model.Customer{Username: username})
 	if find.Error != nil {
 		return nil, find.Error
 	}

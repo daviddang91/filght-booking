@@ -3,7 +3,8 @@ package handler
 import (
 	"net/http"
 
-	cmDto "github.com/daviddang91/filght-booking/common/dto"
+	cDto "github.com/daviddang91/filght-booking/common/dto"
+	cUtil "github.com/daviddang91/filght-booking/common/util"
 	"github.com/daviddang91/filght-booking/customer/dao"
 	"github.com/daviddang91/filght-booking/customer/dto"
 	"github.com/gin-gonic/gin"
@@ -33,31 +34,31 @@ func (h *Handler) CreateCustomer(ctx *gin.Context) {
 				errMessages = append(errMessages, v.Error())
 			}
 
-			response := cmDto.BuildErrorResponse("Error binding request", errMessages)
+			response := cDto.BuildErrorResponse("Error binding request", errMessages)
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 			return
 		}
 
-		response := cmDto.BuildErrorResponse("Error binding request", err.Error())
+		response := cDto.BuildErrorResponse("Error binding request", err.Error())
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
 
 	customer := req.BindRequest()
 	if err := customer.HashPassword(customer.Password); err != nil {
-		response := cmDto.BuildErrorResponse("Failed to register user", err.Error())
+		response := cDto.BuildErrorResponse("Failed to register user", err.Error())
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
 
 	if err := h.customerService.Create(&customer); err != nil {
-		response := cmDto.BuildErrorResponse("Failed to create user", err.Error())
+		response := cDto.BuildErrorResponse("Failed to create user", err.Error())
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
 
 	res := dto.CustomerResponse{}
-	response := cmDto.BuildDetailResponse(res.BindResponse(&customer))
+	response := cDto.BuildDetailResponse(res.BindResponse(&customer))
 	ctx.JSON(201, &response)
 }
 
@@ -65,13 +66,13 @@ func (h *Handler) DetailCustomer(ctx *gin.Context) {
 	customerId := ctx.Param("id")
 	customer, err := h.customerService.GetById(customerId)
 	if err != nil {
-		response := cmDto.BuildErrorResponse("Customer not found", err.Error())
+		response := cDto.BuildErrorResponse("Customer not found", err.Error())
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
 
 	res := dto.CustomerResponse{}
-	response := cmDto.BuildDetailResponse(res.BindResponse(customer))
+	response := cDto.BuildDetailResponse(res.BindResponse(customer))
 	ctx.JSON(200, &response)
 }
 
@@ -84,12 +85,12 @@ func (h *Handler) UpdateCustomer(ctx *gin.Context) {
 				errMessages = append(errMessages, v.Error())
 			}
 
-			response := cmDto.BuildErrorResponse("Error binding request", errMessages)
+			response := cDto.BuildErrorResponse("Error binding request", errMessages)
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 			return
 		}
 
-		response := cmDto.BuildErrorResponse("Error binding request", err.Error())
+		response := cDto.BuildErrorResponse("Error binding request", err.Error())
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
@@ -97,7 +98,7 @@ func (h *Handler) UpdateCustomer(ctx *gin.Context) {
 	customerId := ctx.Param("id")
 	customer, err := h.customerService.GetById(customerId)
 	if err != nil {
-		response := cmDto.BuildErrorResponse("Customer not found", err.Error())
+		response := cDto.BuildErrorResponse("Customer not found", err.Error())
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
@@ -105,13 +106,13 @@ func (h *Handler) UpdateCustomer(ctx *gin.Context) {
 	req.BindUpdateRequest(customer)
 	updated, err := h.customerService.Update(customer)
 	if err != nil {
-		response := cmDto.BuildErrorResponse("Error occurred when update customer", err.Error())
+		response := cDto.BuildErrorResponse("Error occurred when update customer", err.Error())
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
 
 	res := dto.CustomerResponse{}
-	response := cmDto.BuildDetailResponse(res.BindResponse(updated))
+	response := cDto.BuildDetailResponse(res.BindResponse(updated))
 	ctx.JSON(200, &response)
 }
 
@@ -124,12 +125,12 @@ func (h *Handler) ChangePassword(ctx *gin.Context) {
 				errMessages = append(errMessages, v.Error())
 			}
 
-			response := cmDto.BuildErrorResponse("Error binding request", errMessages)
+			response := cDto.BuildErrorResponse("Error binding request", errMessages)
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 			return
 		}
 
-		response := cmDto.BuildErrorResponse("Error binding request", err.Error())
+		response := cDto.BuildErrorResponse("Error binding request", err.Error())
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
@@ -137,14 +138,14 @@ func (h *Handler) ChangePassword(ctx *gin.Context) {
 	customerId := ctx.Param("id")
 	customer, err := h.customerService.GetById(customerId)
 	if err != nil {
-		response := cmDto.BuildErrorResponse("Customer not found", err.Error())
+		response := cDto.BuildErrorResponse("Customer not found", err.Error())
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
 
 	checkPwd := customer.CheckPassword(req.OldPassword)
 	if !checkPwd {
-		response := cmDto.BuildErrorResponse("Invalid password", cmDto.EmptyObj{})
+		response := cDto.BuildErrorResponse("Invalid password", cDto.EmptyObj{})
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, response)
 		return
 	}
@@ -152,12 +153,56 @@ func (h *Handler) ChangePassword(ctx *gin.Context) {
 
 	updated, err := h.customerService.Update(customer)
 	if err != nil {
-		response := cmDto.BuildErrorResponse("Error occurred when update customer", err.Error())
+		response := cDto.BuildErrorResponse("Error occurred when update customer", err.Error())
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
 
 	res := dto.CustomerResponse{}
-	response := cmDto.BuildDetailResponse(res.BindResponse(updated))
+	response := cDto.BuildDetailResponse(res.BindResponse(updated))
+	ctx.JSON(200, &response)
+}
+
+func (h *Handler) Login(ctx *gin.Context) {
+	req := &dto.LoginRequest{}
+	if err := ctx.ShouldBind(&req); err != nil {
+		if validateErrors, ok := err.(validator.ValidationErrors); ok {
+			errMessages := make([]string, 0)
+			for _, v := range validateErrors {
+				errMessages = append(errMessages, v.Error())
+			}
+
+			response := cDto.BuildErrorResponse("Error binding request", errMessages)
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
+			return
+		}
+
+		response := cDto.BuildErrorResponse("Error binding request", err.Error())
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
+		return
+	}
+
+	customer, err := h.customerService.GetByUsername(req.Username)
+	if err != nil {
+		response := cDto.BuildErrorResponse("Customer not found", err.Error())
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
+		return
+	}
+
+	checkPwd := customer.CheckPassword(req.Password)
+	if !checkPwd {
+		response := cDto.BuildErrorResponse("Failed to login", "Invalid credentials")
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		return
+	}
+
+	token, errToken := cUtil.GenerateToken(customer)
+	if errToken != nil {
+		response := cDto.BuildErrorResponse("Failed to login", errToken.Error())
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := cDto.BuildDetailResponse(token)
 	ctx.JSON(200, &response)
 }

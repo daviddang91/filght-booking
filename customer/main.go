@@ -5,6 +5,7 @@ import (
 
 	"github.com/daviddang91/filght-booking/common/config"
 	"github.com/daviddang91/filght-booking/common/database"
+	cmMd "github.com/daviddang91/filght-booking/common/middleware"
 	"github.com/daviddang91/filght-booking/customer/dao"
 	"github.com/daviddang91/filght-booking/customer/handler"
 	"github.com/gin-gonic/gin"
@@ -24,10 +25,12 @@ func main() {
 	g := gin.Default()
 	h := handler.NewHandler(&customerService)
 
-	rg := g.Group("/customers")
-	rg.GET("/ping", h.HealthCheck)
+	g.GET("/customer-ping", h.HealthCheck)
+	g.POST("/login", h.Login)
+	g.POST("register", h.CreateCustomer)
 
-	rg.POST("", h.CreateCustomer)
+	rg := g.Group("/customers")
+	rg.Use(cmMd.Authenticate())
 	rg.GET("/:id", h.DetailCustomer)
 	rg.PUT("/:id", h.UpdateCustomer)
 	rg.PUT("/:id/change-password", h.ChangePassword)
