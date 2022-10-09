@@ -27,7 +27,7 @@ func main() {
 
 	g.GET("/customer-ping", h.HealthCheck)
 	g.POST("/login", h.Login)
-	g.POST("register", h.CreateCustomer)
+	g.POST("/register", h.CreateCustomer)
 
 	rg := g.Group("/customers")
 	rg.Use(cmMd.Authenticate())
