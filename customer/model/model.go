@@ -5,20 +5,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type Gender int
-
-const (
-	Female Gender = iota
-	Male
-)
-
 type Customer struct {
 	bm.BaseModel
 	Username string `column=username;gorm:"uniqueIndex;not null"`
 	Password string `gorm:"column=password;not null"`
 	Email    string `gorm:"column=email;not null"`
 	FullName string `gorm:"column=full_namenot null"`
-	Gender   Gender `gorm:"column=gender;not null"`
 }
 
 func (customer *Customer) HashPassword(password string) error {

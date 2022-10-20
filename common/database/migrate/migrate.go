@@ -1,6 +1,7 @@
 package main
 
 import (
+	bm "github.com/daviddang91/filght-booking/booking/model"
 	"github.com/daviddang91/filght-booking/common/config"
 	"github.com/daviddang91/filght-booking/common/database"
 	cm "github.com/daviddang91/filght-booking/customer/model"
@@ -19,5 +20,6 @@ func main() {
 	db.AutoMigrate(
 		&cm.Customer{},
 		&fm.Flight{},
+		&bm.Booking{},
 	)
 }

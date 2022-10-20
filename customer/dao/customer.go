@@ -39,7 +39,7 @@ func (cs *CustomerService) Update(customer *model.Customer) (*model.Customer, er
 
 func (cs *CustomerService) GetById(customerId string) (*model.Customer, error) {
 	query := model.Customer{}
-	find := cs.DB.First(&query, customerId)
+	find := cs.DB.First(&query, "id = ?", customerId)
 	if find.Error != nil {
 		return nil, find.Error
 	}

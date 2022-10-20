@@ -5,11 +5,10 @@ import (
 )
 
 type CustomerRequest struct {
-	Username string     `json:"username" validate:"required" binding:"required"`
-	Password string     `json:"password" validate:"min=3" binding:"required"`
-	FullName string     `json:"full_name" validate:"min=3" binding:"required"`
-	Gender   cuM.Gender `json:"gender" binding:"required"`
-	Email    string     `json:"email" form:"email" binding:"required,email" `
+	Username string `json:"username" validate:"required" binding:"required"`
+	Password string `json:"password" validate:"min=3" binding:"required"`
+	FullName string `json:"full_name" validate:"min=3" binding:"required"`
+	Email    string `json:"email" form:"email" binding:"required,email" `
 }
 
 func (reg *CustomerRequest) BindRequest() cuM.Customer {
@@ -17,7 +16,6 @@ func (reg *CustomerRequest) BindRequest() cuM.Customer {
 		Username: reg.Username,
 		Password: reg.Password,
 		FullName: reg.FullName,
-		Gender:   reg.Gender,
 		Email:    reg.Email,
 	}
 	return user
@@ -27,7 +25,6 @@ func (reg *CustomerRequest) BindUpdateRequest(customer *cuM.Customer) {
 	customer.Username = reg.Username
 	customer.Password = reg.Password
 	customer.FullName = reg.FullName
-	customer.Gender = reg.Gender
 	customer.Email = reg.Email
 }
 

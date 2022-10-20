@@ -7,16 +7,15 @@ import (
 
 type CustomerResponse struct {
 	cmDto.BaseResponse
-	Username string     `json:"username"`
-	FullName string     `json:"firstName"`
-	Gender   cuM.Gender `json:"gender"`
-	Email    string     `json:"email"`
+	Username string `json:"username"`
+	FullName string `json:"firstName"`
+	Email    string `json:"email"`
 }
 
 func (c *CustomerResponse) BindResponse(customer *cuM.Customer) CustomerResponse {
 	result := CustomerResponse{
 		BaseResponse: cmDto.BaseResponse{
-			ID:        customer.ID,
+			Id:        customer.Id.String(),
 			CreatedAt: customer.CreatedAt,
 			UpdatedAt: customer.UpdatedAt,
 			DeletedAt: customer.DeletedAt,
@@ -24,7 +23,6 @@ func (c *CustomerResponse) BindResponse(customer *cuM.Customer) CustomerResponse
 		Username: customer.Username,
 		FullName: customer.FullName,
 		Email:    customer.Email,
-		Gender:   customer.Gender,
 	}
 	return result
 }

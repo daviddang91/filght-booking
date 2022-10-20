@@ -1,10 +1,10 @@
 package main
 
 import (
+	"github.com/daviddang91/filght-booking/booking/dao"
+	"github.com/daviddang91/filght-booking/booking/handler"
 	"github.com/daviddang91/filght-booking/common/config"
 	"github.com/daviddang91/filght-booking/common/database"
-	"github.com/daviddang91/filght-booking/flight/dao"
-	"github.com/daviddang91/filght-booking/flight/handler"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,18 +16,18 @@ func main() {
 	db := database.OpenConnection()
 	defer database.CloseConnection(db)
 
-	flightService := dao.NewFlightService(db)
+	bookingService := dao.NewBookingService(db)
 
 	// routes
 	g := gin.Default()
-	h := handler.NewHandler(&flightService)
+	h := handler.NewHandler(&bookingService)
 
 	g.GET("/ping", h.HealthCheck)
 
-	g.GET("/flights", h.HandleGetList)
-	g.GET("/flights/:code", h.HandleGetByCode)
+	// g.GET("/flights", h.HandleGetList)
+	// g.GET("/flights/:code", h.HandleGetByCode)
 
-	apiAddress := config.GetFlightApiAddress()
+	apiAddress := config.GetBookingApiAddress()
 	err := g.Run(apiAddress)
 	if err != nil {
 		panic(err)

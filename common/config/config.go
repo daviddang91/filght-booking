@@ -13,26 +13,26 @@ func LoadEnvVariables() {
 	}
 }
 
-func GetCustomerGrpcPort() string {
-	return os.Getenv("CUSTOMER_GRPC_PORT")
+func GetCustomerGrpcAddress() string {
+	return os.Getenv("CUSTOMER_GRPC_ADDRESS")
 }
 
-func GetCustomerApiPort() string {
-	return os.Getenv("CUSTOMER_API_PORT")
+func GetCustomerApiAddress() string {
+	return os.Getenv("CUSTOMER_API_ADDRESS")
 }
 
-func GetFlightGrpcPort() string {
-	return os.Getenv("FLIGHT_GRPC_PORT")
+func GetFlightGrpcAddress() string {
+	return os.Getenv("FLIGHT_GRPC_ADDRESS")
 }
 
-func GetFlightApiPort() string {
-	return os.Getenv("FLIGHT_API_PORT")
+func GetFlightApiAddress() string {
+	return os.Getenv("FLIGHT_API_ADDRESS")
 }
 
-func GetBookingGrpcPort() string {
-	return os.Getenv("BOOKING_GRPC_PORT")
+func GetBookingGrpcAddress() string {
+	return os.Getenv("BOOKING_GRPC_ADDRESS")
 }
 
-func GetBookingApiPort() string {
-	return os.Getenv("BOOKING_API_PORT")
+func GetBookingApiAddress() string {
+	return os.Getenv("BOOKING_API_ADDRESS")
 }

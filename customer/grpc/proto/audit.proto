@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package proto;
+import "google/protobuf/timestamp.proto";
+option go_package = "customer/grpc/pb";
+
+message Audit {
+    google.protobuf.Timestamp created_at = 1;
+    google.protobuf.Timestamp updated_at = 2;
+}

@@ -10,7 +10,7 @@ import (
 type IFlightService interface {
 	GetList(ctx *gin.Context) ([]model.Flight, *util.Pagination, error)
 	GetByCode(code string) (*model.Flight, error)
-	GetById(id uint) (*model.Flight, error)
+	GetById(id string) (*model.Flight, error)
 }
 
 type FlightService struct {
@@ -41,11 +41,11 @@ func (f *FlightService) GetByCode(code string) (*model.Flight, error) {
 	return &query, nil
 }
 
-func (f *FlightService) GetById(id uint) (*model.Flight, error) {
+func (f *FlightService) GetById(id string) (*model.Flight, error) {
 	query := model.Flight{}
-	// find := f.DB.Find(&query, model.Flight{Id: id})
-	// if find.Error != nil {
-	// 	return nil, find.Error
-	// }
+	find := f.DB.Find(&query, "id = ?", id)
+	if find.Error != nil {
+		return nil, find.Error
+	}
 	return &query, nil
 }
