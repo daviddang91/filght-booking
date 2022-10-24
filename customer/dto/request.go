@@ -1,7 +1,7 @@
 package dto
 
 import (
-	cuM "github.com/daviddang91/filght-booking/customer/model"
+	"github.com/daviddang91/filght-booking/customer/model"
 )
 
 type CustomerRequest struct {
@@ -11,8 +11,8 @@ type CustomerRequest struct {
 	Email    string `json:"email" form:"email" binding:"required,email" `
 }
 
-func (reg *CustomerRequest) BindRequest() cuM.Customer {
-	user := cuM.Customer{
+func (reg *CustomerRequest) BindRequest() model.Customer {
+	user := model.Customer{
 		Username: reg.Username,
 		Password: reg.Password,
 		FullName: reg.FullName,
@@ -21,7 +21,7 @@ func (reg *CustomerRequest) BindRequest() cuM.Customer {
 	return user
 }
 
-func (reg *CustomerRequest) BindUpdateRequest(customer *cuM.Customer) {
+func (reg *CustomerRequest) BindUpdateRequest(customer *model.Customer) {
 	customer.Username = reg.Username
 	customer.Password = reg.Password
 	customer.FullName = reg.FullName

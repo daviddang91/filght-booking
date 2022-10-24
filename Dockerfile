@@ -1,22 +1,29 @@
 FROM golang:1.19.0-alpine as builder
 
 ENV GIN_MODE=release
-ENV APP_PORT=3000
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+ENV GOARCH=amd64
 
 WORKDIR /app
 COPY . .
 
 RUN go mod download && go mod verify
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build  -o /out/app ./
+RUN go build  -o /out/customer ./customer && \
+    go build  -o /out/flight ./flight && \
+    go build  -o /out/booking ./booking
 
 ################################
+
 FROM alpine:latest
 
 RUN apk update && rm /var/cache/apk/*
-RUN apk --no-cache add ca-certificates
+RUN apk --no-cache add ca-certificates libressl-dev libffi-dev
 
 WORKDIR /app
-EXPOSE 3000
 
-COPY --from=builder /out/app ./
-CMD ["./app"]
+COPY --from=builder /out/* .
+COPY ./entrypoint.sh .
+RUN chmod -R +x /app/
+
+ENTRYPOINT ["/app/entrypoint.sh"]

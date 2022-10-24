@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package proto;
 import "google/protobuf/timestamp.proto";
-option go_package = "customer/grpc/pb";
+option go_package = "common/grpc/pb";
 
 message Audit {
     google.protobuf.Timestamp created_at = 1;

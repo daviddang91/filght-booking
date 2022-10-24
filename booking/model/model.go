@@ -1,15 +1,25 @@
 package model
 
-import "time"
+import (
+	"time"
+
+	bm "github.com/daviddang91/filght-booking/common/model"
+	cm "github.com/daviddang91/filght-booking/customer/model"
+	fm "github.com/daviddang91/filght-booking/flight/model"
+)
 
 type Booking struct {
-	ID               int       `gorm:"column=id;not null;primaryKey"`
-	CustomerUsername string    `gorm:"column=customer_username;not null"`
-	FlightId         int       `gorm:"column=flight_id;not null"`
-	Code             string    `gorm:"column=code;not null"`
-	Status           string    `gorm:"column=status;not null"`
-	ReservedSlot     int       `gorm:"reserved_slot;not null"`
-	BookedDate       time.Time `gorm:"column=booked_date;not null"`
-	CreatedAt        time.Time `gorm:"column=created_at;not null"`
-	UpdatedAt        time.Time `gorm:"column=updated_at;not null"`
+	bm.BaseModel
+	CustomerId   string      `gorm:"column=customer_id;not null"`
+	Customer     cm.Customer `gorm:"foreignKey:CustomerId"`
+	FlightId     string      `gorm:"column=flight_id;not null"`
+	Flight       fm.Flight   `gorm:"foreignKey:FlightId"`
+	Code         string      `gorm:"column=code;not null"`
+	Status       string      `gorm:"column=status;not null;default:success"`
+	ReservedSlot int32       `gorm:"reserved_slot;not null"`
+	BookedDate   time.Time   `gorm:"column=booked_date;autoCreateTime;not null"`
+}
+
+func (u *Booking) TableName() string {
+	return "booking"
 }

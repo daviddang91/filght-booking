@@ -25,6 +25,18 @@ func (h *Handler) HealthCheck(ctx *gin.Context) {
 	})
 }
 
+func (h *Handler) GetListCustomer(ctx *gin.Context) {
+	customers, pagination, err := h.customerService.GetList(ctx)
+	if err != nil {
+		response := cDto.BuildErrorResponse("Error occurred", err.Error())
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	response := cDto.BuildListResponse(&customers, &pagination)
+	ctx.JSON(200, &response)
+}
+
 func (h *Handler) CreateCustomer(ctx *gin.Context) {
 	req := &dto.CustomerRequest{}
 	if err := ctx.ShouldBind(&req); err != nil {

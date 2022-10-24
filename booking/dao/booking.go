@@ -8,10 +8,10 @@ import (
 )
 
 type IBookingService interface {
-	GetList(username string) ([]model.Booking, error)
-	GetById(id int) (*model.Booking, error)
-	Create(booking *model.Booking) (*model.Booking, error)
-	GetByFlightId(flightId int) ([]model.Booking, error)
+	GetByCustomerId(cusomterId string) ([]model.Booking, error)
+	GetByFlightId(flightId string) ([]model.Booking, error)
+	GetById(bookingId string) (*model.Booking, error)
+	Create(booking *model.Booking) error
 }
 
 type BookingService struct {
@@ -23,33 +23,32 @@ func NewBookingService(db *gorm.DB) BookingService {
 	return BookingService{DB: db}
 }
 
-func (b *BookingService) GetList(username string) ([]model.Booking, error) {
+func (b *BookingService) GetByCustomerId(cusomterId string) ([]model.Booking, error) {
 	var booking []model.Booking
-	find := b.DB.Find(&booking, model.Booking{CustomerUsername: username})
+	find := b.DB.Find(&booking, model.Booking{CustomerId: cusomterId})
 	if find.Error != nil {
 		return nil, find.Error
 	}
 	return booking, nil
 }
 
-func (b *BookingService) GetById(id int) (*model.Booking, error) {
+func (b *BookingService) GetById(bookingId string) (*model.Booking, error) {
 	booking := model.Booking{}
-	find := b.DB.Find(&booking, model.Booking{ID: id})
+	find := b.DB.Find(&booking, "id = ?", bookingId)
 	if find.Error != nil {
 		return nil, find.Error
 	}
 	return &booking, nil
 }
 
-func (b *BookingService) Create(booking *model.Booking) (*model.Booking, error) {
-	create := b.DB.Create(booking)
-	if create.Error != nil {
-		return nil, create.Error
+func (b *BookingService) Create(booking *model.Booking) error {
+	if err := b.DB.Create(&booking).Error; err != nil {
+		return err
 	}
-	return booking, nil
+	return nil
 }
 
-func (b *BookingService) GetByFlightId(flightId int) ([]model.Booking, error) {
+func (b *BookingService) GetByFlightId(flightId string) ([]model.Booking, error) {
 	var result []model.Booking
 	find := b.DB.Find(&result, model.Booking{FlightId: flightId})
 	if find.Error != nil {

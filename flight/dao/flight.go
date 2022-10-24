@@ -11,6 +11,7 @@ type IFlightService interface {
 	GetList(ctx *gin.Context) ([]model.Flight, *util.Pagination, error)
 	GetByCode(code string) (*model.Flight, error)
 	GetById(id string) (*model.Flight, error)
+	Create(flight *model.Flight) error
 }
 
 type FlightService struct {
@@ -48,4 +49,11 @@ func (f *FlightService) GetById(id string) (*model.Flight, error) {
 		return nil, find.Error
 	}
 	return &query, nil
+}
+
+func (f *FlightService) Create(flight *model.Flight) error {
+	if err := f.DB.Create(&flight).Error; err != nil {
+		return err
+	}
+	return nil
 }

@@ -7,9 +7,11 @@ import (
 )
 
 func LoadEnvVariables() {
-	err := godotenv.Load()
-	if err != nil {
-		panic(err)
+	if _, err := os.Stat(".env"); err == nil {
+		err := godotenv.Load()
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 

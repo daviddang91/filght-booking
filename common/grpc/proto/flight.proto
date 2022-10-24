@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package proto;
+import "common/grpc/proto/audit.proto";
+import "google/protobuf/timestamp.proto";
+option go_package = "common/grpc/pb";
+
+message FlightResponse {
+    string id = 1;
+    string name = 2;
+    string from = 3;
+    string to = 4;
+    string code = 5;
+    int32 total_slot = 6;
+    google.protobuf.Timestamp departure_time = 7;
+    google.protobuf.Timestamp arrival_time = 8;
+    Audit audit = 9;
+}
+
+message FlightRequest {
+    string id = 1;
+}
+
+service FlightService {
+    rpc DetailFlight (FlightRequest) returns (FlightResponse);
+}

@@ -3,8 +3,8 @@ package handler
 import (
 	"context"
 
+	"github.com/daviddang91/filght-booking/common/grpc/pb"
 	"github.com/daviddang91/filght-booking/customer/dao"
-	"github.com/daviddang91/filght-booking/customer/grpc/pb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -13,7 +13,7 @@ type Server struct {
 	CustomerService dao.ICustomerService
 }
 
-func (s *Server) DetailCustomer(ctx context.Context, req *pb.DetailCustomerRequest) (*pb.CustomerResponse, error) {
+func (s *Server) DetailCustomer(ctx context.Context, req *pb.CustomerRequest) (*pb.CustomerResponse, error) {
 	found, err := s.CustomerService.GetById(req.Id)
 
 	if err != nil {
@@ -21,15 +21,13 @@ func (s *Server) DetailCustomer(ctx context.Context, req *pb.DetailCustomerReque
 	}
 
 	return &pb.CustomerResponse{
-		Customer: &pb.Customer{
-			Id:       found.Id.String(),
-			Username: found.Username,
-			Email:    found.Email,
-			FullName: found.FullName,
-			Audit: &pb.Audit{
-				CreatedAt: timestamppb.New(found.CreatedAt),
-				UpdatedAt: timestamppb.New(found.UpdatedAt),
-			},
+		Id:       found.Id.String(),
+		Username: found.Username,
+		Email:    found.Email,
+		FullName: found.FullName,
+		Audit: &pb.Audit{
+			CreatedAt: timestamppb.New(found.CreatedAt),
+			UpdatedAt: timestamppb.New(found.UpdatedAt),
 		},
 	}, nil
 }

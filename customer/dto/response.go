@@ -2,7 +2,7 @@ package dto
 
 import (
 	cmDto "github.com/daviddang91/filght-booking/common/dto"
-	cuM "github.com/daviddang91/filght-booking/customer/model"
+	"github.com/daviddang91/filght-booking/customer/model"
 )
 
 type CustomerResponse struct {
@@ -12,7 +12,7 @@ type CustomerResponse struct {
 	Email    string `json:"email"`
 }
 
-func (c *CustomerResponse) BindResponse(customer *cuM.Customer) CustomerResponse {
+func (c *CustomerResponse) BindResponse(customer *model.Customer) CustomerResponse {
 	result := CustomerResponse{
 		BaseResponse: cmDto.BaseResponse{
 			Id:        customer.Id.String(),

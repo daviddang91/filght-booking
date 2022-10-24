@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package proto;
+import "common/grpc/proto/audit.proto";
+option go_package = "common/grpc/pb";
+
+message CustomerResponse {
+    string id = 1;
+    string username = 2;
+    string email = 3;
+    string full_name = 4;
+    Audit audit = 5;
+}
+
+message CustomerRequest {
+    string id = 1;
+}
+
+service CustomerService {
+    rpc DetailCustomer (CustomerRequest) returns (CustomerResponse);
+}

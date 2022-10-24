@@ -7,9 +7,9 @@ import (
 
 	"github.com/daviddang91/filght-booking/common/config"
 	"github.com/daviddang91/filght-booking/common/database"
-	cmMd "github.com/daviddang91/filght-booking/common/middleware"
+	"github.com/daviddang91/filght-booking/common/grpc/pb"
+	"github.com/daviddang91/filght-booking/common/middleware"
 	"github.com/daviddang91/filght-booking/customer/dao"
-	"github.com/daviddang91/filght-booking/customer/grpc/pb"
 	"github.com/daviddang91/filght-booking/customer/handler"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
@@ -26,7 +26,7 @@ func main() {
 	customerService := dao.NewCustomerService(db)
 
 	// init grpc
-	grpcAddr := config.GetFlightGrpcAddress()
+	grpcAddr := config.GetCustomerGrpcAddress()
 	c := make(chan bool)
 	go func() {
 		list, err := net.Listen("tcp", grpcAddr)
@@ -59,11 +59,12 @@ func main() {
 	g.POST("/login", h.Login)
 	g.POST("/register", h.CreateCustomer)
 
-	rg := g.Group("/customers")
-	rg.Use(cmMd.Authenticate())
-	rg.GET("/:id", h.DetailCustomer)
-	rg.PUT("/:id", h.UpdateCustomer)
-	rg.PUT("/:id/change-password", h.ChangePassword)
+	rg := g.Group("/admin")
+	rg.Use(middleware.Authenticate())
+	rg.GET("customers/", h.GetListCustomer)
+	rg.GET("customers/:id", h.DetailCustomer)
+	rg.PUT("customers/:id", h.UpdateCustomer)
+	rg.PUT("customers/:id/change-password", h.ChangePassword)
 
 	apiAddress := config.GetCustomerApiAddress()
 	err := g.Run(apiAddress)

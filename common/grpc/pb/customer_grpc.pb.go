@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.21.5
-// source: customer/grpc/proto/rpc-customer.proto
+// source: common/grpc/proto/customer.proto
 
 package pb
 
@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CustomerServiceClient interface {
-	DetailCustomer(ctx context.Context, in *DetailCustomerRequest, opts ...grpc.CallOption) (*CustomerResponse, error)
+	DetailCustomer(ctx context.Context, in *CustomerRequest, opts ...grpc.CallOption) (*CustomerResponse, error)
 }
 
 type customerServiceClient struct {
@@ -33,7 +33,7 @@ func NewCustomerServiceClient(cc grpc.ClientConnInterface) CustomerServiceClient
 	return &customerServiceClient{cc}
 }
 
-func (c *customerServiceClient) DetailCustomer(ctx context.Context, in *DetailCustomerRequest, opts ...grpc.CallOption) (*CustomerResponse, error) {
+func (c *customerServiceClient) DetailCustomer(ctx context.Context, in *CustomerRequest, opts ...grpc.CallOption) (*CustomerResponse, error) {
 	out := new(CustomerResponse)
 	err := c.cc.Invoke(ctx, "/proto.CustomerService/DetailCustomer", in, out, opts...)
 	if err != nil {
@@ -46,7 +46,7 @@ func (c *customerServiceClient) DetailCustomer(ctx context.Context, in *DetailCu
 // All implementations must embed UnimplementedCustomerServiceServer
 // for forward compatibility
 type CustomerServiceServer interface {
-	DetailCustomer(context.Context, *DetailCustomerRequest) (*CustomerResponse, error)
+	DetailCustomer(context.Context, *CustomerRequest) (*CustomerResponse, error)
 	mustEmbedUnimplementedCustomerServiceServer()
 }
 
@@ -54,7 +54,7 @@ type CustomerServiceServer interface {
 type UnimplementedCustomerServiceServer struct {
 }
 
-func (UnimplementedCustomerServiceServer) DetailCustomer(context.Context, *DetailCustomerRequest) (*CustomerResponse, error) {
+func (UnimplementedCustomerServiceServer) DetailCustomer(context.Context, *CustomerRequest) (*CustomerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DetailCustomer not implemented")
 }
 func (UnimplementedCustomerServiceServer) mustEmbedUnimplementedCustomerServiceServer() {}
@@ -71,7 +71,7 @@ func RegisterCustomerServiceServer(s grpc.ServiceRegistrar, srv CustomerServiceS
 }
 
 func _CustomerService_DetailCustomer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DetailCustomerRequest)
+	in := new(CustomerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -83,7 +83,7 @@ func _CustomerService_DetailCustomer_Handler(srv interface{}, ctx context.Contex
 		FullMethod: "/proto.CustomerService/DetailCustomer",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CustomerServiceServer).DetailCustomer(ctx, req.(*DetailCustomerRequest))
+		return srv.(CustomerServiceServer).DetailCustomer(ctx, req.(*CustomerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -101,5 +101,5 @@ var CustomerService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "customer/grpc/proto/rpc-customer.proto",
+	Metadata: "common/grpc/proto/customer.proto",
 }

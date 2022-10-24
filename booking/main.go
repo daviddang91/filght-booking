@@ -5,6 +5,7 @@ import (
 	"github.com/daviddang91/filght-booking/booking/handler"
 	"github.com/daviddang91/filght-booking/common/config"
 	"github.com/daviddang91/filght-booking/common/database"
+	"github.com/daviddang91/filght-booking/common/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,8 +25,9 @@ func main() {
 
 	g.GET("/ping", h.HealthCheck)
 
-	// g.GET("/flights", h.HandleGetList)
-	// g.GET("/flights/:code", h.HandleGetByCode)
+	rg := g.Group("/bookings")
+	rg.Use(middleware.Authenticate())
+	rg.POST("/reserve", h.HandleReserveBooking)
 
 	apiAddress := config.GetBookingApiAddress()
 	err := g.Run(apiAddress)
